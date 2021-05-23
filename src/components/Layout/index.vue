@@ -1,12 +1,12 @@
 <template>
     <div class="container" :class="classObj">
-        <header-bar></header-bar>
+        <!-- <header-bar></header-bar> -->
         <router-view/>
         <footer-bar :menulist="menulist"></footer-bar>
     </div>
 </template>
 <script>
-import HeaderBar from '@/components/Layout/HeaderBar'
+// import HeaderBar from '@/components/Layout/HeaderBar'
 import FooterBar from '@/components/Layout/FooterBar'
 import {ref,computed,watch} from 'vue';
 import { useRoute } from "vue-router";
@@ -16,7 +16,7 @@ const footMenuEffect = ()=>{
     menulist.value = [
         {name: '首页',path:'/',iconPath: require('@/assets/images/tab-1.png'),selectIconPath: require('@/assets/images/tab-1-cur.png')},
         {name: '分类',path:'/category',iconPath: require('@/assets/images/tab-2.png'),selectIconPath: require('@/assets/images/tab-2-cur.png')},
-        {name: '星球',path:'/star',iconPath: require('@/assets/images/tab-3.png'),selectIconPath: require('@/assets/images/tab-3-cur.png')},
+        // {name: '星球',path:'/star',iconPath: require('@/assets/images/tab-3.png'),selectIconPath: require('@/assets/images/tab-3-cur.png')},
         {name: '购物车',path:'/cart',iconPath: require('@/assets/images/tab-4.png'),selectIconPath: require('@/assets/images/tab-4-cur.png')},
         {name: '我的',path:'/my',iconPath: require('@/assets/images/tab-5.png'),selectIconPath: require('@/assets/images/tab-5-cur.png')},
     ]
@@ -29,14 +29,14 @@ const footMenuEffect = ()=>{
 }
 
 export default{
-    components:{HeaderBar,FooterBar},
+    components:{FooterBar},
     setup(){
         const {menulist,showFooter} = footMenuEffect();
 
         const classObj = computed(() => {
             return [
                 showFooter.value?'has-footer':'',
-                'has-header'
+                // 'has-header'
             ]
         })
         return {
