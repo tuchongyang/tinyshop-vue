@@ -7,7 +7,6 @@ import './assets/rem/rem'
 
 const app = createApp(App)
 
-
 import Vant from 'vant';
 import 'vant/lib/index.css';
 app.use(Vant)
