@@ -1,5 +1,5 @@
 {
-  "name": "vue-mi-shop",
+  "name": "tinyshop-vue",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "axios": "^0.21.4",
     "core-js": "^3.6.5",
     "vant": "^3.0.13",
     "vue": "^3.0.0",

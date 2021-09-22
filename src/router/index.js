@@ -43,6 +43,18 @@ const routes = [
         component: () => import("@/views/my/index.vue"),
       },
       {
+        path: "login",
+        name: "Login",
+        meta: { title: "登录" },
+        component: () => import("@/views/public/login.vue"),
+      },
+      {
+        path: "my/info",
+        name: "MyInfo",
+        meta: { title: "我的资料" },
+        component: () => import("@/views/my/info/index.vue"),
+      },
+      {
         path: "my/address",
         name: "MyAddress",
         meta: { title: "我的地址" },

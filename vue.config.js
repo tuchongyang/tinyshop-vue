@@ -11,6 +11,17 @@ module.exports = {
     },
   },
   devServer: {
-    proxy: "http://tinyshop.tucy.top",
+    proxy: {
+      public: {
+        target: "http://tinyshop.tucy.top",
+        ws: true,
+        changeOrigin: true,
+      },
+      api: {
+        target: "http://tinyshop.tucy.top",
+        ws: true,
+        changeOrigin: true,
+      },
+    },
   },
 }

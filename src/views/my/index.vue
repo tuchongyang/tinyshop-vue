@@ -1,8 +1,14 @@
 <template>
   <div class="my-container">
-    <div class="user-head">
+    <div class="user-head" @click="toUser" v-if="!user.id">
       <div class="avatar"><img src="../../assets/images/default-user.png" /></div>
       <div class="uname">登录/注册</div>
+    </div>
+    <div class="user-head" @click="toUser" v-else>
+      <div class="avatar">
+        <img :src="(user.avatar && user.avatar.url) || '../../assets/images/default-user.png'" />
+      </div>
+      <div class="uname">{{ user.name }}</div>
     </div>
     <div class="order-state">
       <div class="item" v-for="(item, index) in orderStates" :key="index">
@@ -20,9 +26,13 @@
   </div>
 </template>
 <script>
-import { defineComponent, ref } from "vue"
+import { defineComponent, ref, computed } from "vue"
+import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 export default defineComponent({
   setup() {
+    const store = useStore()
+    const router = useRouter()
     const orderStates = ref([
       { label: "全部", icon: "records" },
       { label: "待付款", icon: "balance-pay" },
@@ -35,9 +45,17 @@ export default defineComponent({
       { title: "我的收藏", icon: "star-o" },
       { title: "设置", icon: "setting-o" },
     ])
+    const user = computed(() => store.state.user.user)
+    const toUser = () => {
+      console.log("user", user)
+      const url = user.value.id ? "/my/info" : "/login"
+      router.push(url)
+    }
     return {
       orderStates,
       menuList,
+      user,
+      toUser,
     }
   },
 })
@@ -51,6 +69,16 @@ export default defineComponent({
   .avatar {
     display: inline-block;
     vertical-align: middle;
+    width: 1.6rem;
+    height: 1.6rem;
+    background: #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
   }
   .uname {
     display: inline-block;
