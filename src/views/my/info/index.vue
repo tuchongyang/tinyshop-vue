@@ -11,7 +11,7 @@
         <div class="txt">{{ user.name }}</div>
         <div class="arrow-right"><van-icon name="arrow" /></div>
       </div>
-      <div class="item">
+      <div class="item" @click="toEdit('username')">
         <div class="tit">用户名</div>
         <div class="txt">{{ user.username }}</div>
         <div class="arrow-right"><van-icon name="arrow" /></div>
@@ -37,12 +37,23 @@
 <script>
 import { computed } from "vue"
 import { useStore } from "vuex"
+import {useRouter} from 'vue-router'
 export default {
   setup() {
     const store = useStore()
+    const router = useRouter()
     const user = computed(() => store.state.user.user)
+    const toEdit = (key)=>{
+      router.push({
+        path: "/my/info/edit",
+        query:{
+          key
+        }
+      })
+    }
     return {
       user,
+      toEdit
     }
   },
 }

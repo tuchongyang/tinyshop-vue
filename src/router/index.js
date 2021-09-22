@@ -55,6 +55,12 @@ const routes = [
         component: () => import("@/views/my/info/index.vue"),
       },
       {
+        path: "my/info/edit",
+        name: "MyInfoEdit",
+        meta: { title: "我的资料" },
+        component: () => import("@/views/my/info/edit.vue"),
+      },
+      {
         path: "my/address",
         name: "MyAddress",
         meta: { title: "我的地址" },

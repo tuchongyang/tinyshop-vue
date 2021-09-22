@@ -60,7 +60,7 @@ export default{
     }
     &.has-header{
         padding-top: 1.6rem;
-        padding-top: 1.4rem;
+        padding-top: 1.2rem;
     }
 }
 </style>
