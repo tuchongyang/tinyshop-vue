@@ -17,6 +17,12 @@ export default {
       state.user = value
       Utils.storage.local.set("userInfo", value)
     },
+    CLEAR_USER: (state) => {
+      state.token = ""
+      state.user = {}
+      Utils.storage.local.remove("token")
+      Utils.storage.local.remove("userInfo")
+    },
   },
   actions: {
     async login({ commit }, { username = "", password = "" }) {
@@ -24,14 +30,17 @@ export default {
         commit("SET_TOKEN", res)
       })
     },
-    async getUserInfo({ commit }) {
+    async getUserInfo({ commit }, refresh) {
       let userInfo = Utils.storage.local.get("userInfo")
-      if (userInfo) {
+      if (userInfo && !refresh) {
         commit("SET_USER", userInfo)
         return
       }
       const res = await api.system.user.info()
       commit("SET_USER", res)
+    },
+    async logout({ commit }) {
+      commit("CLEAR_USER")
     },
   },
 }

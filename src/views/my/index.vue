@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="menu-list">
-      <div class="item" v-for="(item, index) in menuList" :key="index">
+      <div class="item" v-for="(item, index) in menuList" :key="index" @click="toPath(item.to)">
         <component class="icon" :is="'van-icon'" :name="item.icon" />
         <span class="tit">{{ item.title }}</span>
         <span class="arrow-right"><van-icon name="arrow" /></span>
@@ -41,9 +41,9 @@ export default defineComponent({
       { label: "待评价", icon: "flower-o" },
     ])
     const menuList = ref([
-      { title: "收货地址", icon: "location-o" },
+      { title: "收货地址", icon: "location-o", to: "/my/address" },
       { title: "我的收藏", icon: "star-o" },
-      { title: "设置", icon: "setting-o" },
+      { title: "设置", icon: "setting-o", to: "/my/setting" },
     ])
     const user = computed(() => store.state.user.user)
     const toUser = () => {
@@ -51,11 +51,15 @@ export default defineComponent({
       const url = user.value.id ? "/my/info" : "/login"
       router.push(url)
     }
+    const toPath = (to) => {
+      to && router.push(to)
+    }
     return {
       orderStates,
       menuList,
       user,
       toUser,
+      toPath,
     }
   },
 })
@@ -116,6 +120,9 @@ export default defineComponent({
     &:last-child {
       border-radius: 0 0 $radius $radius;
       border-bottom: 0;
+    }
+    &:active {
+      background: #fafafa;
     }
     .arrow-right {
       position: absolute;

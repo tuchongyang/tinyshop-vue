@@ -1,56 +1,51 @@
 <template>
   <div class="ad-container has-footer">
-    <van-form @submit="onSubmit">
-      <van-field
-        v-model="form.name"
-        name="收件人"
-        label="收件人"
-        placeholder="请输入收件人姓名"
-        :rules="[{ required: true, message: '请输入收件人姓名' }]"
-      />
-      <van-field
-        v-model="form.phone"
-        name="电话"
-        label="电话"
-        placeholder="请输入收件人电话"
-        :rules="[{ required: true, message: '请输入收件人电话' }]"
-      />
-      <van-field
-        v-model="form.phone"
-        name="地址"
-        label="地址"
-        placeholder="请输入收件人地址"
-        :rules="[{ required: true, message: '请输入收件人地址' }]"
-      />
-      <van-field name="switch" label="默认">
-        <template #input>
-          <van-switch v-model="form.isDefault" size="20" />
-        </template>
-      </van-field>
-
-      <div class="fix-footer padding">
-        <van-button type="primary" block native-type="submit">确 定</van-button>
-      </div>
-    </van-form>
+    <van-address-edit
+      :area-list="areaList"
+      :address-info="addressInfo"
+      show-postal
+      show-set-default
+      show-search-result
+      :area-columns-placeholder="['请选择', '请选择', '请选择']"
+      @save="onSave"
+      @delete="onDelete"
+      @change-detail="onChangeDetail"
+    />
   </div>
 </template>
 <script>
 import { defineComponent, ref } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import api from "@/api"
+import { areaList } from "@vant/area-data"
+import { Toast } from "vant"
 
 export default defineComponent({
   setup() {
-    const form = ref({
-      name: "",
-      phone: "",
-      address: "",
-      isDefault: false,
-    })
-    const onSubmit = (values) => {
-      console.log(values)
+    const route = useRoute()
+    const router = useRouter()
+    const addressInfo = ref({})
+    const getData = () => {
+      const id = route.query.id
+      if (!id) return
+
+      api.member.address.detail(id).then((res) => {
+        addressInfo.value = res
+      })
     }
+    getData()
+    const onSave = (data) => {
+      api.member.address.save(data).then(() => {
+        Toast.success("保存成功")
+        router.back()
+      })
+    }
+    const onDelete = () => {}
     return {
-      form,
-      onSubmit,
+      onSave,
+      onDelete,
+      areaList,
+      addressInfo,
     }
   },
 })

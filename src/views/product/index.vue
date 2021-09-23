@@ -9,70 +9,100 @@
       </div>
       <div class="header-right"></div>
     </div>
-    <div class="product-list grid">
-      <div class="item" v-for="(item, index) in list" :key="index">
-        <div class="inner">
-          <div class="img">
-            <img class="image" :src="item.img" />
-          </div>
-          <div class="det">
-            <div class="title">
-              <a href="javascript:;"> {{ item.title }}</a>
-            </div>
-            <div>
-              <div class="tag red">
-                <!-- {{ item.tagNames[0].tagName }} -->
+    <van-pull-refresh class="list-container has-footer" v-model="refreshing" @refresh="onRefresh">
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getList">
+        <div class="product-list grid">
+          <div class="item" v-for="(item, index) in list" :key="index" @click="toProduct(item)">
+            <div class="inner">
+              <div class="img">
+                <img class="image" :src="item.thumbnailImage.url" />
               </div>
-            </div>
-            <div class="head">
-              <span class="price">
-                <b>￥999</b>
-                <span class="del">￥99.00</span>
-              </span>
+              <div class="det">
+                <div class="title">
+                  <a href="javascript:;"> {{ item.name }}</a>
+                </div>
+                <div>
+                  <div class="tag red">
+                    <!-- {{ item.tagNames[0].tagName }} -->
+                  </div>
+                </div>
+                <div class="head">
+                  <span class="price">
+                    <b>￥{{ item.salePrice }}</b>
+                    <span class="del">￥{{ item.marketPrice }}</span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
 import { defineComponent, ref } from "vue"
+import { useRouter } from "vue-router"
+import api from "@/api"
 export default defineComponent({
   components: {},
   setup() {
-    const list = ref([
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-      {
-        title: "dddd",
-        img: "//cdn.cnbj1.fds.api.mi-img.com/mi-mall/b849e46756af7c95002aa3906ed77c13.jpg?thumb=1&w=344&h=280",
-      },
-    ])
+    const router = useRouter()
+    const loading = ref(false)
+    const finished = ref(false)
+    const refreshing = ref(false)
+    const params = ref({
+      page: 0,
+      pageSize: 10,
+    })
+    const list = ref([])
+    const getList = () => {
+      if (finished.value) {
+        return
+      }
+      params.value.page++
+      loading.value = true
+      api.shop.good
+        .list(params.value)
+        .then((res) => {
+          if (refreshing.value) {
+            list.value = []
+          }
+          list.value = list.value.concat(res.rows)
+          if (list.value.length >= res.count) {
+            finished.value = true
+          }
+        })
+        .catch((e) => {
+          console.log("e", e)
+        })
+        .finally(() => {
+          loading.value = false
+          refreshing.value = false
+        })
+    }
+    const onRefresh = () => {
+      params.value.page = 0
+      finished.value = false
+      getList()
+    }
+    const toProduct = (data) => {
+      router.push({
+        path: "/product/detail",
+        query: {
+          id: data.id,
+        },
+      })
+    }
+
     return {
       list,
+      refreshing,
+      loading,
+      finished,
+      onRefresh,
+      getList,
+      toProduct,
     }
   },
 })

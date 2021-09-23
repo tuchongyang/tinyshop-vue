@@ -71,3 +71,32 @@ input::placeholder {
 .has-footer {
   padding-bottom: 1.8rem;
 }
+
+//菜单列表
+.list {
+  .item {
+    padding: 0.4rem 0.8rem 0.4rem 0.4rem;
+    background: #fff;
+    position: relative;
+    border-bottom: 1px solid $color-border;
+    @include clearfix;
+    &:active {
+      background: #fafafa;
+    }
+    .tit {
+      float: left;
+    }
+    .txt {
+      float: right;
+      color: #999;
+    }
+    .arrow-right {
+      position: absolute;
+      right: 0.3rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.4rem;
+      color: #ccc;
+    }
+  }
+}

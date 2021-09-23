@@ -62,8 +62,13 @@ export default {
       if (!form.value.password) {
         return Toast("请输入密码")
       }
+      Toast.loading({
+        message: "登录中...",
+        forbidClick: true,
+      })
       store.dispatch("user/login", { username: form.value.name, password: form.value.password }).then(() => {
         store.dispatch("user/getUserInfo", form.value).then(() => {
+          Toast.success("登录成功")
           router.back()
         })
       })
@@ -163,6 +168,9 @@ export default {
         line-height: 1rem;
         margin-top: 2rem;
         border-radius: $radius;
+        &:active {
+          opacity: 0.9;
+        }
       }
     }
   }
@@ -196,17 +204,4 @@ export default {
     transform: translate3d(85px, 0, 0);
   }
 }
-/*Shrinking for mobile*/
-// @media (max-width: 768px) {
-//   .waves {
-//     height: 40px;
-//     min-height: 40px;
-//   }
-//   .content {
-//     height: 30vh;
-//   }
-//   h1 {
-//     font-size: 24px;
-//   }
-// }
 </style>

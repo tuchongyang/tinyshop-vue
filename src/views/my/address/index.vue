@@ -1,82 +1,115 @@
 <template>
-  <div class="ad-container has-footer">
-    <div class="address-list">
-      <div class="item" v-for="(item, index) in list" :key="index">
-        <div class="name"><span class="tag-default" v-if="item.isDefault">默认</span>{{ item.address }}</div>
-        <div class="desc">
-          <span>{{ item.name }}</span
-          ><span>{{ item.phone }}</span>
+  <div class="ad-container">
+    <van-pull-refresh class="list-container has-footer" v-model="refreshing" @refresh="onRefresh">
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getList">
+        <div class="address-list">
+          <div class="item" v-for="(item, index) in list" :key="index">
+            <div class="name">
+              <span class="tag-default" v-if="item.isDefault">默认</span
+              >{{ item.province + item.city + item.county + item.addressDetail }}
+            </div>
+            <div class="desc">
+              <span>{{ item.name }}</span
+              ><span>{{ item.tel }}</span>
+            </div>
+            <div class="control">
+              <div class="btn" @click="toEdit(item.id)"><van-icon name="edit" /></div>
+              <div class="btn" @click="remove(item, index)"><van-icon name="delete-o" /></div>
+            </div>
+          </div>
         </div>
-        <div class="control">
-          <div class="btn" @click="toEdit"><van-icon name="edit" /></div>
-          <div class="btn"><van-icon name="delete-o" /></div>
-        </div>
-      </div>
-    </div>
+      </van-list>
+    </van-pull-refresh>
+    <van-empty description="数据空空的" v-if="!list.length && !loading" />
     <div class="fix-footer padding">
-      <van-button type="primary" block>添加地址</van-button>
+      <van-button type="warning" block @click="toEdit()">添加地址</van-button>
     </div>
   </div>
 </template>
 <script>
 import { defineComponent, ref } from "vue"
 import { useRouter } from "vue-router"
+import api from "@/api"
+import { Dialog, Toast } from "vant"
 
 export default defineComponent({
   setup() {
     const router = useRouter()
-    const list = ref([
-      {
-        address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心",
-        name: "张三",
-        phone: "187444422222",
-        isDefault: true,
-      },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-      { address: "湖北省武汉市东湖新技术开发区高新大道光谷企业中心", name: "张三", phone: "187444422222" },
-    ])
-    const toEdit = () => {
-      router.push("/my/address/edit?id=2")
+    const loading = ref(false)
+    const finished = ref(false)
+    const refreshing = ref(false)
+    const params = ref({
+      page: 0,
+      pageSize: 10,
+    })
+    const list = ref([])
+    const getList = () => {
+      if (finished.value) {
+        return
+      }
+      params.value.page++
+      loading.value = true
+      api.member.address
+        .list(params.value)
+        .then((res) => {
+          if (refreshing.value) {
+            list.value = []
+          }
+          list.value = list.value.concat(res.rows)
+          if (list.value.length >= res.count) {
+            finished.value = true
+          }
+        })
+        .finally(() => {
+          loading.value = false
+          refreshing.value = false
+        })
+    }
+    const onRefresh = () => {
+      params.value.page = 0
+      finished.value = false
+      getList()
+    }
+    const toEdit = (id) => {
+      router.push("/my/address/edit?id=" + id)
+    }
+    //删除
+    const remove = (data, index) => {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认删除该地址吗？",
+      })
+        .then(() => {
+          // on confirm
+          api.member.address.remove(data.id).then(() => {
+            Toast.success("删除成功")
+            list.value.splice(index, 1)
+          })
+        })
+        .catch(() => {
+          // on cancel
+        })
     }
     return {
       list,
       toEdit,
+      getList,
+      loading,
+      finished,
+      refreshing,
+      onRefresh,
+      remove,
     }
   },
 })
 </script>
 
 <style scoped lang="scss">
+.ad-container {
+  .list-container {
+    min-height: 100vh;
+  }
+}
 .address-list {
   .item {
     background: #fff;
@@ -85,6 +118,7 @@ export default defineComponent({
     position: relative;
     .name {
       margin-bottom: 0.2rem;
+      line-height: 1.4;
     }
     .desc {
       color: $color-gray;

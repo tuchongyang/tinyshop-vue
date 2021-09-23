@@ -1,34 +1,16 @@
 <template>
   <div class="container">
     <div class="head">
-      <div class="avatar">
-        <img :src="(user.avatar && user.avatar.url) || '../../assets/images/default-user.png'" />
-      </div>
+      <van-uploader :after-read="afterRead">
+        <div class="avatar">
+          <img :src="(user.avatar && user.avatar.url) || '../../assets/images/default-user.png'" />
+        </div>
+      </van-uploader>
     </div>
     <div class="menu">
-      <div class="item">
-        <div class="tit">昵称</div>
-        <div class="txt">{{ user.name }}</div>
-        <div class="arrow-right"><van-icon name="arrow" /></div>
-      </div>
-      <div class="item" @click="toEdit('username')">
-        <div class="tit">用户名</div>
-        <div class="txt">{{ user.username }}</div>
-        <div class="arrow-right"><van-icon name="arrow" /></div>
-      </div>
-      <div class="item">
-        <div class="tit">邮箱</div>
-        <div class="txt">{{ user.email || "无" }}</div>
-        <div class="arrow-right"><van-icon name="arrow" /></div>
-      </div>
-      <div class="item">
-        <div class="tit">电话</div>
-        <div class="txt">{{ user.phone || "无" }}</div>
-        <div class="arrow-right"><van-icon name="arrow" /></div>
-      </div>
-      <div class="item">
-        <div class="tit">性别</div>
-        <div class="txt">{{ user.sex == 1 ? "男" : "女" || "无" }}</div>
+      <div class="item" v-for="item in schema" :key="item.prop" @click="toEdit(item.prop)">
+        <div class="tit">{{ item.label }}</div>
+        <div class="txt">{{ getValue(item) }}</div>
         <div class="arrow-right"><van-icon name="arrow" /></div>
       </div>
     </div>
@@ -37,23 +19,55 @@
 <script>
 import { computed } from "vue"
 import { useStore } from "vuex"
-import {useRouter} from 'vue-router'
+import { useRouter } from "vue-router"
+import schema from "./schema"
+import api from "@/api"
+import { Toast } from "vant"
 export default {
   setup() {
     const store = useStore()
     const router = useRouter()
     const user = computed(() => store.state.user.user)
-    const toEdit = (key)=>{
+    const toEdit = (key) => {
       router.push({
         path: "/my/info/edit",
-        query:{
-          key
-        }
+        query: {
+          key,
+        },
+      })
+    }
+    const getValue = (data) => {
+      let val = user.value[data.prop]
+      let result = val
+      if (data.type == "select") {
+        const cur = data.options.find((a) => a.value == val)
+        result = (cur && cur.label) || val
+      }
+      return result || "无"
+    }
+    //头像上传
+    const afterRead = (file) => {
+      console.log("file", file)
+      const formData = new FormData()
+      formData.append("file", file.file)
+      Toast.loading({
+        message: "上传中...",
+        forbidClick: true,
+      })
+      api.system.file.upload(formData).then((res) => {
+        console.log("res", res)
+        api.system.user.update({ avatarId: res.id }).then(() => {
+          Toast("修改成功")
+          store.dispatch("user/getUserInfo", true).then(() => {})
+        })
       })
     }
     return {
       user,
-      toEdit
+      toEdit,
+      schema,
+      getValue,
+      afterRead,
     }
   },
 }
@@ -61,6 +75,7 @@ export default {
 <style scoped lang="scss">
 .head {
   padding: 1.2rem 0;
+  text-align: center;
   .avatar {
     width: 1.8rem;
     height: 1.8rem;
