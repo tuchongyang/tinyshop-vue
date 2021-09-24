@@ -3,7 +3,7 @@
     <van-pull-refresh class="list-container has-footer" v-model="refreshing" @refresh="onRefresh">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getList">
         <div class="address-list">
-          <div class="item" v-for="(item, index) in list" :key="index">
+          <div class="item" v-for="(item, index) in list" :key="index" @click="select(item)">
             <div class="name">
               <span class="tag-default" v-if="item.isDefault">默认</span
               >{{ item.province + item.city + item.county + item.addressDetail }}
@@ -28,12 +28,14 @@
 </template>
 <script>
 import { defineComponent, ref } from "vue"
+import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 import api from "@/api"
 import { Dialog, Toast } from "vant"
 
 export default defineComponent({
   setup() {
+    const store = useStore()
     const router = useRouter()
     const loading = ref(false)
     const finished = ref(false)
@@ -90,6 +92,11 @@ export default defineComponent({
           // on cancel
         })
     }
+    //选择
+    const select = (data) => {
+      store.commit("cart/SET_ADDRESS", data)
+      router.back()
+    }
     return {
       list,
       toEdit,
@@ -99,6 +106,7 @@ export default defineComponent({
       refreshing,
       onRefresh,
       remove,
+      select,
     }
   },
 })

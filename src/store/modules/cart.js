@@ -3,12 +3,18 @@ import Utils from "@/utils"
 export default {
   namespaced: true,
   state: {
-    cartList: Utils.storage.local.get("cartList") || {},
+    cartList: Utils.storage.local.get("cartList") || [],
+    address: {} //用来存储下订单时，路由跳转选择的地址
   },
   getters: {},
   mutations: {
     ADD_CART: (state, value) => {
-      state.cartList.push(value)
+      var same = state.cartList.find(a => a.goodId == value.goodId && a.specId == value.specId)
+      if (same) {
+        same.count += value.count
+      } else {
+        state.cartList.push(value)
+      }
       Utils.storage.local.set("cartList", state.cartList)
     },
     REMOVE_CART: (state, cartId) => {
@@ -19,6 +25,9 @@ export default {
     CLEAR_CART: (state) => {
       state.cartList = []
       Utils.storage.local.remove("cartList")
+    },
+    SET_ADDRESS: (state, value) => {
+      state.address = value
     },
   },
   actions: {

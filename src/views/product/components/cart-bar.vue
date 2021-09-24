@@ -47,7 +47,7 @@
       <van-stepper v-model="count" theme="round" button-size="22" disable-input />
     </div>
     <div class="foot">
-      <div class="btn" :class="'btn-' + type">{{ type == "cart" ? "加入购物车" : "立即购买" }}</div>
+      <div class="btn" :class="'btn-' + type" @click="toCarOrBuy">{{ type == "cart" ? "加入购物车" : "立即购买" }}</div>
     </div>
   </div>
   <div class="spec-dialog-cover" :class="{ open: visible }" @click="close"></div>
@@ -55,6 +55,9 @@
 <script>
 import { ref } from "vue"
 import { useRouter } from "vue-router"
+import {useStore} from 'vuex'
+import {Toast} from 'vant'
+import Utils from "@/utils"
 export default {
   props: {
     good: {
@@ -66,6 +69,7 @@ export default {
   },
   setup(props, context) {
     const router = useRouter()
+    const store = useStore()
     const currentSpec = ref({})
     const count = ref(1)
     const visible = ref(false)
@@ -88,6 +92,47 @@ export default {
     const routeTo = (url) => {
       router.push(url)
     }
+    const tocart = ()=>{
+      const cart = {
+        id: Utils.uuid(),
+        goodName: props.good.name,
+        goodId: props.good.id,
+        goodPic: props.good.thumbnailImage?.url,
+        salePrice: currentSpec.value.salePrice,
+        marketPrice: currentSpec.value.marketPrice,
+        specId: currentSpec.value.id,
+        specName: currentSpec.value.name,
+        count: count.value,
+        isCheck: true
+      }
+      console.log('eee')
+      store.dispatch('cart/addCart',cart).then(()=>{
+        Toast.success("添加购物车成功")
+        close()
+      })
+    }
+    const tobuy = ()=>{
+      const cart = {
+        id: Utils.uuid(),
+        goodName: props.good.name,
+        goodId: props.good.id,
+        goodPic: props.good.thumbnailImage?.url,
+        salePrice: currentSpec.value.salePrice,
+        marketPrice: currentSpec.value.marketPrice,
+        specId: currentSpec.value.id,
+        specName: currentSpec.value.name,
+        count: count.value
+      }
+      router.push({
+        path: "/order",
+        query: {
+          cart: encodeURIComponent(JSON.stringify(cart))
+        }
+      })
+    }
+    const toCarOrBuy = ()=>{
+      type.value=='cart'?tocart():tobuy()
+    }
     return {
       currentSpec,
       selectSpec,
@@ -97,6 +142,7 @@ export default {
       visible,
       close,
       routeTo,
+      toCarOrBuy
     }
   },
 }
@@ -143,7 +189,7 @@ export default {
 }
 .spec-dialog {
   background: #fff;
-  position: absolute;
+  position: fixed;
   width: 100%;
   z-index: 200;
   bottom: 0;
@@ -168,6 +214,7 @@ export default {
       margin-top: -0.8rem;
       border: 3px solid #fff;
       border-radius: $radius;
+      background: #fff;
       img {
         width: 100%;
         height: 100%;
@@ -246,6 +293,9 @@ export default {
     line-height: 1rem;
     color: #fff;
     border-radius: $radius;
+    &:active{
+      opacity: .8;
+    }
     &.btn-cart {
       background: #ff9600;
     }

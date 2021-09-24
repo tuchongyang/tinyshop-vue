@@ -79,6 +79,12 @@ const routes = [
         component: () => import("@/views/my/setting/index.vue"),
       },
       {
+        path: "order",
+        name: "Order",
+        meta: { title: "下单" },
+        component: () => import("@/views/cart/order.vue"),
+      },
+      {
         path: "/:catchAll(.*)",
         meta: { title: "404" },
         component: () => import("@/views/public/404.vue"),
