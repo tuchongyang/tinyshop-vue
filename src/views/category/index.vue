@@ -18,7 +18,7 @@
         <ul class="cate-list">
           <li v-for="(sub, i) in item.children" :key="i" @click="toProduct(sub)">
             <div class="img">
-              <img :src="sub.image.url" />
+              <img :src="sub.image && sub.image.url" />
             </div>
             <div class="name">{{ sub.name }}</div>
           </li>

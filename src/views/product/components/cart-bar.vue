@@ -1,10 +1,10 @@
 <template>
   <div class="cart-bar">
-    <div class="item">
+    <div class="item" @click="routeTo('/')">
       <van-icon class="icon" name="shop-o" />
       <span class="txt">首页</span>
     </div>
-    <div class="item">
+    <div class="item" @click="routeTo('/cart')">
       <van-icon class="icon" name="shopping-cart-o" />
       <span class="txt">购物车</span>
     </div>
@@ -54,6 +54,7 @@
 </template>
 <script>
 import { ref } from "vue"
+import { useRouter } from "vue-router"
 export default {
   props: {
     good: {
@@ -63,24 +64,29 @@ export default {
       },
     },
   },
-  setup(props) {
+  setup(props, context) {
+    const router = useRouter()
     const currentSpec = ref({})
     const count = ref(1)
     const visible = ref(false)
     const selectSpec = (data) => {
       currentSpec.value = data
+      context.emit("change", currentSpec.value)
     }
 
     const type = ref("cart")
     const open = (opt) => {
       visible.value = true
-      type.value = opt.type || "cart"
+      type.value = (opt && opt.type) || "cart"
       if (!currentSpec.value.id) {
-        currentSpec.value = props.good.specs[0]
+        selectSpec(props.good.specs[0])
       }
     }
     const close = () => {
       visible.value = false
+    }
+    const routeTo = (url) => {
+      router.push(url)
     }
     return {
       currentSpec,
@@ -90,6 +96,7 @@ export default {
       type,
       visible,
       close,
+      routeTo,
     }
   },
 }

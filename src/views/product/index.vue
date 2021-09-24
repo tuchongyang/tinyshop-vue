@@ -15,7 +15,7 @@
           <div class="item" v-for="(item, index) in list" :key="index" @click="toProduct(item)">
             <div class="inner">
               <div class="img">
-                <img class="image" :src="item.thumbnailImage.url" />
+                <img class="image" :src="item.thumbnailImage && item.thumbnailImage.url" />
               </div>
               <div class="det">
                 <div class="title">

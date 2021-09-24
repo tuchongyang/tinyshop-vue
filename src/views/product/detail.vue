@@ -17,8 +17,29 @@
         ><span>浏览量：0</span>
       </div>
     </div>
-    <div class="pro-info"></div>
-    <CartBar ref="cartBarRef" :good="good" />
+    <div class="pro-info">
+      <div class="list">
+        <div class="item" @click="selectSpec">
+          <span class="tit">规格</span>
+          <span class="txt">{{ currentSpec.name }}</span>
+          <span class="arrow-right"><van-icon name="arrow" /></span>
+        </div>
+        <div class="item">
+          <span class="tit">服务</span>
+          <span class="txt">7天无理由退换货 · 假一赔十</span>
+        </div>
+      </div>
+    </div>
+    <div class="rate-info">
+      <div class="head">评价(0)</div>
+    </div>
+    <div class="desc-info">
+      <div class="title">图文详情</div>
+      <div class="body" v-html="good.content"></div>
+      <van-empty description="数据空空的" v-if="!good.content && !loading" />
+      <div class="foot">已经到底了</div>
+    </div>
+    <CartBar ref="cartBarRef" :good="good" @change="onSepcChange" />
   </div>
 </template>
 <script>
@@ -31,28 +52,46 @@ export default defineComponent({
   setup() {
     const route = useRoute()
     const good = ref({ images: [], specs: [] })
+    const loading = ref(false)
     const getData = () => {
       const id = route.query.id
-      api.shop.good.detail(id).then((res) => {
-        good.value = res
-      })
+      loading.value = true
+      api.shop.good
+        .detail(id)
+        .then((res) => {
+          good.value = res
+        })
+        .finally(() => {
+          loading.value = false
+        })
     }
     const stock = computed(() => (good.value.specs && good.value.specs.reduce((next, cur) => next + cur.stock, 0)) || 0)
 
     const cartBarRef = ref(null)
+    const selectSpec = () => {
+      cartBarRef.value.open()
+    }
+    const currentSpec = ref({})
+    const onSepcChange = (spec) => {
+      currentSpec.value = spec
+    }
 
     getData()
     return {
       good,
       stock,
       cartBarRef,
+      loading,
+      selectSpec,
+      onSepcChange,
+      currentSpec,
     }
   },
 })
 </script>
 <style scoped lang="scss">
 .p-container {
-  padding-bottom: 1rem;
+  padding-bottom: 1.6rem;
   overflow: hidden;
 }
 .swiper {
@@ -95,6 +134,42 @@ export default defineComponent({
     display: flex;
     justify-content: space-between;
     color: $color-gray;
+  }
+}
+.pro-info {
+  margin: 0.3rem 0;
+  .list {
+    .item {
+      background: #fff;
+    }
+  }
+}
+.rate-info {
+  background: #fff;
+  margin: 0.3rem 0;
+  padding: 0.4rem;
+}
+.desc-info {
+  margin-top: 0.3rem;
+  background: #fff;
+  .title {
+    text-align: center;
+    padding: 0.2rem 0;
+    &:before,
+    &:after {
+      content: "";
+      width: 1rem;
+      height: 1px;
+      background: #ddd;
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 0.3rem;
+    }
+  }
+  .foot {
+    font-size: 0.3rem;
+    text-align: center;
+    padding: 0.2rem 0;
   }
 }
 </style>
