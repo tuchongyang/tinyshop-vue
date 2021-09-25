@@ -79,10 +79,22 @@ const routes = [
         component: () => import("@/views/my/setting/index.vue"),
       },
       {
+        path: "my/order",
+        name: "MyOrder",
+        meta: { title: "我的订单" },
+        component: () => import("@/views/my/order/index.vue"),
+      },
+      {
         path: "order",
         name: "Order",
         meta: { title: "下单" },
         component: () => import("@/views/cart/order.vue"),
+      },
+      {
+        path: "order/success",
+        name: "OrderSuccess",
+        meta: { title: "下单成功" },
+        component: () => import("@/views/cart/order-success.vue"),
       },
       {
         path: "/:catchAll(.*)",

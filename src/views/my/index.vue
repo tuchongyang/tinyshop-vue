@@ -11,7 +11,7 @@
       <div class="uname">{{ user.name }}</div>
     </div>
     <div class="order-state">
-      <div class="item" v-for="(item, index) in orderStates" :key="index">
+      <div class="item" v-for="(item, index) in orderStates" :key="index" @click="toPath(item.to)">
         <component class="icon" :is="'van-icon'" :name="item.icon" />
         <div class="name">{{ item.label }}</div>
       </div>
@@ -34,11 +34,11 @@ export default defineComponent({
     const store = useStore()
     const router = useRouter()
     const orderStates = ref([
-      { label: "全部", icon: "records" },
-      { label: "待付款", icon: "balance-pay" },
-      { label: "待发货", icon: "logistics" },
-      { label: "待收货", icon: "peer-pay" },
-      { label: "待评价", icon: "flower-o" },
+      { label: "全部", icon: "records", to: "/my/order" },
+      { label: "待付款", icon: "balance-pay", to: "/my/order?status=ordered" },
+      { label: "待发货", icon: "logistics", to: "/my/order?status=paid" },
+      { label: "待收货", icon: "peer-pay", to: "/my/order?status=receiving" },
+      { label: "已完成", icon: "flower-o", to: "/my/order?status=completed" },
     ])
     const menuList = ref([
       { title: "收货地址", icon: "location-o", to: "/my/address" },

@@ -46,7 +46,7 @@
     <div class="list">
       <div class="item">
         <span class="tit">商品金额</span>
-        <span class="txt">{{ totalPrice }}</span>
+        <span class="txt">￥{{ totalPrice }}</span>
       </div>
       <div class="item">
         <span class="tit">优惠金额</span>
@@ -56,7 +56,7 @@
         <span class="tit">运费</span>
         <span class="txt">免运费</span>
       </div>
-      <van-field v-model="value" label="备注" placeholder="请输入备注" />
+      <van-field v-model="remark" label="备注" placeholder="请输入备注" />
     </div>
     <van-submit-bar class="submit-bar" :price="totalPrice * 100" button-text="提交订单" @submit="onSubmit" />
   </div>
@@ -65,11 +65,14 @@
 import { ref, computed } from "vue"
 import { useStore } from "vuex"
 import { useRoute, useRouter } from "vue-router"
+import { Toast } from "vant"
+import api from "@/api"
 export default {
   setup() {
     const route = useRoute()
     const router = useRouter()
     const store = useStore()
+    const remark = ref("")
     /** 处理商品列表 */
     let cartList = ref([])
     if (route.query.cartIds) {
@@ -90,11 +93,45 @@ export default {
     console.log("cartList.value", cartList.value)
     /** 计算价格 */
     const totalPrice = computed(() => cartList.value.reduce((next, cur) => next + cur.salePrice * cur.count, 0))
+    /** 提交订单 */
+    const onSubmit = () => {
+      if (!address.value.id) {
+        return Toast("请选择收货地址")
+      }
+      const opt = {
+        addressId: address.value.id,
+        merchantId: 1,
+        remark: remark.value,
+        goodList: cartList.value.map((item) => {
+          return {
+            id: item.goodId,
+            qty: item.count,
+            goodSpecId: item.specId,
+          }
+        }),
+      }
+      api.member.order.save(opt).then(() => {
+        Toast.success("提交成功")
+        // store.commit("cart/SET_ADDRESS", {})
+        //订购成功，如果是来源购物车，则清除购物车数据
+        cartList.value
+          .filter((a) => a.id)
+          .map((item) => {
+            store.dispatch("cart/removeCart", item.id)
+          })
+        router.replace({
+          path: "/order/success",
+          query: {},
+        })
+      })
+    }
     return {
       cartList,
       address,
+      remark,
       onAdd,
       totalPrice,
+      onSubmit,
     }
   },
 }

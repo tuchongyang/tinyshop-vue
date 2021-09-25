@@ -18,7 +18,7 @@
       </div>
     </div>
     <van-empty description="数据空空的" v-if="!cartList.length" />
-    <div class="cart-footer">
+    <div class="cart-footer" v-if="cartList.length">
       <van-button
         class="btn-submit"
         round
@@ -83,6 +83,7 @@ export default {
     border-bottom: 1px solid #eee;
     padding: 0.4rem;
     background: #fff;
+    position: relative;
     &:after {
       content: "";
       display: block;
