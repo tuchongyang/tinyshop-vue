@@ -1,14 +1,15 @@
 <template>
-  <!-- <div class="list">
-    <div class="item" v-for="item in list" :key="item.prop" @click="toEdit(item.prop)">
-      <div class="tit">{{ item.label }}</div>
-      <div class="txt">{{ getValue(item) }}</div>
-      <div class="arrow-right"><van-icon name="arrow" /></div>
+  <div class="list">
+    <div class="item" v-for="(item, index) in menuList" :key="index" @click="toPath(item.to)">
+      <component class="icon" :is="'van-icon'" :name="item.icon" />
+      <span class="tit">{{ item.title }}</span>
+      <span class="arrow-right"><van-icon name="arrow" /></span>
     </div>
-  </div> -->
+  </div>
   <div class="btn-block btn-logout" @click="logout">退出登录</div>
 </template>
 <script>
+import { ref } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
 export default {
@@ -20,7 +21,13 @@ export default {
         router.back()
       })
     }
-    return { logout }
+
+    const menuList = ref([{ title: "个人资料", icon: "setting-o", to: "/my/info" }])
+
+    const toPath = (to) => {
+      to && router.push(to)
+    }
+    return { logout, menuList, toPath }
   },
 }
 </script>

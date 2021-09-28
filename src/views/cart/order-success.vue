@@ -6,10 +6,25 @@
     </div>
     <div class="control">
       <div class="btn" @click="routeTo('/')">返回首页</div>
-      <div class="btn" @click="routeTo('/order')">查看订单</div>
+      <div class="btn btn-primary" @click="routeTo('/my/order')">查看订单</div>
     </div>
   </div>
 </template>
+<script>
+import { useRouter } from "vue-router"
+export default {
+  setup() {
+    const router = useRouter()
+    const routeTo = (path) => {
+      router.push(path)
+    }
+    return {
+      routeTo,
+    }
+  },
+}
+</script>
+
 <style scoped lang="scss">
 .head {
   padding: 0.4rem;
@@ -21,12 +36,18 @@
 }
 .control {
   margin-top: 1rem;
+  text-align: center;
   .btn {
     display: inline-block;
-    width: 4rem;
+    width: 3rem;
     text-align: center;
-    line-height: 1rem;
+    line-height: 0.8rem;
+    margin: 0 0.2rem;
     border: 1px solid $color-primary;
+  }
+  .btn-primary {
+    background: $color-primary;
+    color: #fff;
   }
 }
 </style>

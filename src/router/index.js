@@ -79,6 +79,12 @@ const routes = [
         component: () => import("@/views/my/setting/index.vue"),
       },
       {
+        path: "my/fav",
+        name: "MyFav",
+        meta: { title: "我的收藏" },
+        component: () => import("@/views/my/fav/index.vue"),
+      },
+      {
         path: "my/order",
         name: "MyOrder",
         meta: { title: "我的订单" },

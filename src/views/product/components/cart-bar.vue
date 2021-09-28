@@ -8,9 +8,13 @@
       <van-icon class="icon" name="shopping-cart-o" />
       <span class="txt">购物车</span>
     </div>
-    <div class="item">
+    <div class="item" v-if="!good.isFav" @click="fav">
       <van-icon class="icon" name="star-o" />
       <span class="txt">收藏</span>
+    </div>
+    <div class="item active" v-else @click="cancelfav">
+      <van-icon class="icon" name="star" />
+      <span class="txt">已收藏</span>
     </div>
 
     <div class="item">
@@ -55,9 +59,10 @@
 <script>
 import { ref } from "vue"
 import { useRouter } from "vue-router"
-import {useStore} from 'vuex'
-import {Toast} from 'vant'
+import { useStore } from "vuex"
+import { Toast } from "vant"
 import Utils from "@/utils"
+import api from "@/api"
 export default {
   props: {
     good: {
@@ -92,7 +97,7 @@ export default {
     const routeTo = (url) => {
       router.push(url)
     }
-    const tocart = ()=>{
+    const tocart = () => {
       const cart = {
         id: Utils.uuid(),
         goodName: props.good.name,
@@ -103,15 +108,15 @@ export default {
         specId: currentSpec.value.id,
         specName: currentSpec.value.name,
         count: count.value,
-        isCheck: true
+        isCheck: true,
       }
-      console.log('eee')
-      store.dispatch('cart/addCart',cart).then(()=>{
+      console.log("eee")
+      store.dispatch("cart/addCart", cart).then(() => {
         Toast.success("添加购物车成功")
         close()
       })
     }
-    const tobuy = ()=>{
+    const tobuy = () => {
       const cart = {
         id: Utils.uuid(),
         goodName: props.good.name,
@@ -121,17 +126,32 @@ export default {
         marketPrice: currentSpec.value.marketPrice,
         specId: currentSpec.value.id,
         specName: currentSpec.value.name,
-        count: count.value
+        count: count.value,
       }
       router.push({
         path: "/order",
         query: {
-          cart: encodeURIComponent(JSON.stringify(cart))
-        }
+          cart: encodeURIComponent(JSON.stringify(cart)),
+        },
       })
     }
-    const toCarOrBuy = ()=>{
-      type.value=='cart'?tocart():tobuy()
+    const toCarOrBuy = () => {
+      type.value == "cart" ? tocart() : tobuy()
+    }
+
+    const fav = () => {
+      api.member.fav.save({ goodId: props.good.id }).then(() => {
+        Toast.success("收藏成功")
+        const good = props.good
+        good.isFav = true
+      })
+    }
+    const cancelfav = () => {
+      api.member.fav.cancel({ goodId: props.good.id }).then(() => {
+        Toast.success("取消成功")
+        const good = props.good
+        good.isFav = false
+      })
     }
     return {
       currentSpec,
@@ -142,7 +162,9 @@ export default {
       visible,
       close,
       routeTo,
-      toCarOrBuy
+      toCarOrBuy,
+      fav,
+      cancelfav,
     }
   },
 }
@@ -163,6 +185,9 @@ export default {
     padding: 0.15rem 0;
     text-align: center;
     white-space: nowrap;
+    &.active {
+      color: $color-primary;
+    }
     .icon {
       font-size: 0.6rem;
     }
@@ -293,8 +318,8 @@ export default {
     line-height: 1rem;
     color: #fff;
     border-radius: $radius;
-    &:active{
-      opacity: .8;
+    &:active {
+      opacity: 0.8;
     }
     &.btn-cart {
       background: #ff9600;

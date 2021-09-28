@@ -83,6 +83,12 @@ input::placeholder {
     &:active {
       background: #fafafa;
     }
+    .icon {
+      float: left;
+      & ~ .tit {
+        margin-left: 0.2rem;
+      }
+    }
     .tit {
       float: left;
     }

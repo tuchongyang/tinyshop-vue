@@ -4,9 +4,9 @@
       <van-tab :title="item.label" v-for="item in statusTabs" :key="item.value" :name="item.value"></van-tab>
     </van-tabs>
     <van-pull-refresh class="list-container has-footer" v-model="refreshing" @refresh="onRefresh">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getList">
+      <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="getList">
         <div class="order-list">
-          <div class="order-item" v-for="(item, index) in list" :key="index" @click="select(item)">
+          <div class="order-item" v-for="(item, index) in list" :key="index" @click="toDetail(item.id)">
             <div class="head">
               <div class="status" v-html="getStatus(item.status)"></div>
               <div class="time">{{ item.createdAt }}</div>
@@ -26,9 +26,23 @@
               </div>
             </div>
             <!-- <div class="good-tip">共{{ item.goodsTotalQty }}件商品，实付款：￥{{ item.totalAmount }}</div> -->
-            <div class="control">
-              <van-button plain type="default" size="small">取消订单</van-button>
-              <van-button plain type="warning" size="small">立即支付</van-button>
+            <div class="control" v-if="['canceled'].indexOf(item.status) <= -1">
+              <van-button
+                plain
+                type="default"
+                size="small"
+                @click.stop="cancelOrder(item)"
+                v-if="['canceled'].indexOf(item.status) <= -1"
+                >取消订单</van-button
+              >
+              <van-button
+                plain
+                type="warning"
+                size="small"
+                @click.stop="payOrder(item)"
+                v-if="['ordered'].indexOf(item.status) > -1"
+                >立即支付</van-button
+              >
             </div>
           </div>
         </div>
@@ -39,14 +53,12 @@
 </template>
 <script>
 import { defineComponent, ref } from "vue"
-import { useStore } from "vuex"
 import { useRouter, useRoute } from "vue-router"
 import api from "@/api"
 import { Dialog, Toast } from "vant"
 
 export default defineComponent({
   setup() {
-    const store = useStore()
     const route = useRoute()
     const router = useRouter()
     const loading = ref(false)
@@ -59,11 +71,11 @@ export default defineComponent({
     })
     const list = ref([])
     const getList = () => {
+      console.log("finished", finished)
       if (finished.value) {
         return
       }
       params.value.page++
-      loading.value = true
       api.member.order
         .list(params.value)
         .then((res) => {
@@ -71,9 +83,10 @@ export default defineComponent({
             list.value = []
           }
           list.value = list.value.concat(res.rows)
-          if (list.value.length >= res.count) {
-            finished.value = true
-          }
+          console.log(list.value.length, res.count)
+          // if (list.value.length >= res.count) {
+          finished.value = true
+          // }
         })
         .finally(() => {
           loading.value = false
@@ -85,31 +98,46 @@ export default defineComponent({
       finished.value = false
       getList()
     }
-    const toEdit = (id) => {
-      router.push("/my/address/edit?id=" + id)
+    const toDetail = (id) => {
+      router.push("/my/order/detail?id=" + id)
     }
-    //删除
-    const remove = (data, index) => {
+    //取消订单
+    const cancelOrder = (data) => {
       Dialog.confirm({
         title: "提示",
-        message: "确认删除该地址吗？",
+        message: "确认取消该订单吗？",
       })
         .then(() => {
           // on confirm
-          api.member.address.remove(data.id).then(() => {
-            Toast.success("删除成功")
-            list.value.splice(index, 1)
+          api.member.order.cancel(data.id).then(() => {
+            Toast.success("取消成功")
+            refreshing.value = true
+            onRefresh()
           })
         })
         .catch(() => {
           // on cancel
         })
     }
-    //选择
-    const select = (data) => {
-      store.commit("cart/SET_ADDRESS", data)
-      router.back()
+    //支付订单
+    const payOrder = (data) => {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认支付该订单吗？",
+      })
+        .then(() => {
+          // on confirm
+          api.member.order.pay(data.id).then(() => {
+            Toast.success("支付成功")
+            refreshing.value = true
+            onRefresh()
+          })
+        })
+        .catch(() => {
+          // on cancel
+        })
     }
+
     //状态tab
     const statusTabs = ref([
       { label: "全部", value: "" },
@@ -117,6 +145,7 @@ export default defineComponent({
       { label: "待发货", value: "paid" },
       { label: "待收货", value: "receiving" },
       { label: "已完成", value: "completed" },
+      { label: "已取消", value: "canceled" },
     ])
     const onTabChange = (name) => {
       params.value.status = name
@@ -129,6 +158,7 @@ export default defineComponent({
         { value: "paid", label: "待发货", color: "#ff9600" },
         { value: "receiving", label: "待收货", color: "#ff9600" },
         { value: "completed", label: "已完成", color: "#00be0a" },
+        { value: "canceled", label: "已取消", color: "#999" },
       ]
       const cur = map.find((a) => a.value == val)
       return (cur && `<span style="color: ${cur.color}">${cur.label}</span>`) || val
@@ -136,17 +166,17 @@ export default defineComponent({
     return {
       list,
       params,
-      toEdit,
+      toDetail,
       getList,
       loading,
       finished,
       refreshing,
       onRefresh,
-      remove,
-      select,
+      cancelOrder,
       statusTabs,
       onTabChange,
       getStatus,
+      payOrder,
     }
   },
 })
@@ -182,6 +212,10 @@ export default defineComponent({
           content: "";
           display: block;
           clear: both;
+        }
+        &:last-child {
+          border: 0;
+          padding-bottom: 0;
         }
         .img {
           width: 2rem;
@@ -227,8 +261,10 @@ export default defineComponent({
       margin-top: -0.6rem;
     }
     .control {
+      margin-top: 0.3rem;
       padding-top: 0.2rem;
       text-align: right;
+      border-top: 1px solid $color-border;
       .van-button {
         margin-left: 0.2rem;
       }

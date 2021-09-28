@@ -42,7 +42,7 @@ export default defineComponent({
     ])
     const menuList = ref([
       { title: "收货地址", icon: "location-o", to: "/my/address" },
-      { title: "我的收藏", icon: "star-o" },
+      { title: "我的收藏", icon: "star-o", to: "/my/fav" },
       { title: "设置", icon: "setting-o", to: "/my/setting" },
     ])
     const user = computed(() => store.state.user.user)
@@ -102,7 +102,7 @@ export default defineComponent({
     text-align: center;
     color: #666;
     .icon {
-      font-size: 20px;
+      font-size: 0.7rem;
       margin-bottom: 0.2rem;
     }
   }
