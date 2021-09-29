@@ -13,14 +13,14 @@ module.exports = {
   devServer: {
     proxy: {
       public: {
-        // target: "http://tinyshop.tucy.top",
-        target: "http://localhost:7001",
+        target: "http://tinyshop.tucy.top",
+        // target: "http://localhost:7001",
         ws: true,
         changeOrigin: true,
       },
       api: {
-        // target: "http://tinyshop.tucy.top",
-        target: "http://localhost:7001",
+        target: "http://tinyshop.tucy.top",
+        // target: "http://localhost:7001",
         ws: true,
         changeOrigin: true,
       },

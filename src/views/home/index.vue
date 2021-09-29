@@ -71,7 +71,7 @@ export default {
   background: rgba(0, 0, 0, 0.1);
 }
 .swiper {
-  height: 6rem;
+  height: 5rem;
   img {
     max-width: 100%;
   }

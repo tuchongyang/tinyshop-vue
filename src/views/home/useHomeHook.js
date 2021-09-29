@@ -38,7 +38,7 @@ export const useProductHook = () => {
     params.value.page++
     loading.value = true
     api.shop.good
-      .list(params)
+      .list(params.value)
       .then((res) => {
         if (refreshing.value) {
           list.value = []

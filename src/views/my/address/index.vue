@@ -18,9 +18,9 @@
             </div>
           </div>
         </div>
+        <van-empty v-if="!list.length && !loading" />
       </van-list>
     </van-pull-refresh>
-    <van-empty description="数据空空的" v-if="!list.length && !loading" />
     <div class="fix-footer padding">
       <van-button type="warning" block @click="toEdit()">添加地址</van-button>
     </div>

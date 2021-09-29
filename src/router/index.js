@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
-
+import NProgress from "nprogress" // progress bar
+import "nprogress/nprogress.css" // progress bar style
 const routes = [
   {
     path: "",
@@ -115,5 +116,11 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 })
-
+router.beforeEach((to, from, next) => {
+  NProgress.start()
+  next()
+})
+router.afterEach(() => {
+  NProgress.done()
+})
 export default router
