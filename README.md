@@ -25,6 +25,17 @@
 
 [API接口文档](http://tinyshop.tucy.top/doc)
 
+
+## 截图
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s1.jpg" alt="首页" width="210" align="top" /><img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s2.jpg" alt="购物车" width="210" align="top" />
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s3.jpg" alt="分类" width="210" align="top" />
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s4.jpg" alt="商品列表" width="210" align="top" />
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s5.jpg" alt="下订单" width="210" align="top" />
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s6.jpg" alt="我的订单" width="210" align="top" />
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s7.jpg" alt="订购成功" width="210" align="top" />
+<img src="https://github.com/tuchongyang/tinyshop-vue/blob/master/public/screenshorts/s8.jpg" alt="个人中心" width="210" align="top" />
+
+
 ## 运行
 
 ```
