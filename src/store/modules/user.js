@@ -25,8 +25,8 @@ export default {
     },
   },
   actions: {
-    async login({ commit }, { username = "", password = "" }) {
-      return api.system.user.login({ username, password }).then((res) => {
+    async login({ commit }, { name = "", password = "" }) {
+      return api.system.user.login({ name, password }).then((res) => {
         commit("SET_TOKEN", res)
       })
     },

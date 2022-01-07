@@ -66,7 +66,7 @@ export default {
         message: "登录中...",
         forbidClick: true,
       })
-      store.dispatch("user/login", { username: form.value.name, password: form.value.password }).then(() => {
+      store.dispatch("user/login", { name: form.value.name, password: form.value.password }).then(() => {
         store.dispatch("user/getUserInfo", form.value).then(() => {
           Toast.success("登录成功")
           router.back()

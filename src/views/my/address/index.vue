@@ -73,7 +73,7 @@ export default defineComponent({
       getList()
     }
     const toEdit = (id) => {
-      router.push("/my/address/edit?id=" + id)
+      router.push("/my/address/edit?id=" + (id || ""))
     }
     //删除
     const remove = (data, index) => {
