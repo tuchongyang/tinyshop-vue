@@ -1,8 +1,8 @@
 import system from "./system"
-import shop from "./shop"
+import store from "./store"
 import member from "./member"
 export default {
   system,
-  shop,
+  store,
   member,
 }

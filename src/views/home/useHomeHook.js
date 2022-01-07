@@ -8,7 +8,7 @@ export const useSwiperHook = () => {
     current.value = index
   }
   const loadData = () => {
-    api.shop.banner.list().then((res) => {
+    api.store.banner.list().then((res) => {
       swipes.value = res
     })
   }
@@ -37,7 +37,7 @@ export const useProductHook = () => {
     }
     params.value.page++
     loading.value = true
-    api.shop.good
+    api.store.good
       .list(params.value)
       .then((res) => {
         if (refreshing.value) {

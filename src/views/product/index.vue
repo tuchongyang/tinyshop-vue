@@ -15,7 +15,7 @@
           <div class="item" v-for="(item, index) in list" :key="index" @click="toProduct(item)">
             <div class="inner">
               <div class="img">
-                <img class="image" :src="item.thumbnailImage && item.thumbnailImage.url" />
+                <img class="image" :src="item.picUrl" />
               </div>
               <div class="det">
                 <div class="title">
@@ -62,7 +62,7 @@ export default defineComponent({
       }
       params.value.page++
       loading.value = true
-      api.shop.good
+      api.store.good
         .list(params.value)
         .then((res) => {
           if (refreshing.value) {
@@ -185,6 +185,8 @@ export default defineComponent({
         }
       }
       .title {
+        height: 0.8rem;
+        overflow: hidden;
         margin-bottom: 0.1rem;
       }
       .price {

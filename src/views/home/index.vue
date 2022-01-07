@@ -13,7 +13,7 @@
         <div class="home-title">热销爆款</div>
         <div class="product-list">
           <div class="item" v-for="(item, index) in list" :key="index" @click="toProduct(item)">
-            <div class="img"><img :src="item.thumbnailImage?.url" /></div>
+            <div class="img"><img :src="item.picUrl" /></div>
             <div class="det">
               <div class="name">{{ item.name }}</div>
               <div class="des">{{ item.desc }}</div>

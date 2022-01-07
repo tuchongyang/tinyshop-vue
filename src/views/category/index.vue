@@ -18,7 +18,7 @@
         <ul class="cate-list">
           <li v-for="(sub, i) in item.children" :key="i" @click="toProduct(sub)">
             <div class="img">
-              <img :src="sub.image && sub.image.url" />
+              <img :src="sub.imageUrl" />
             </div>
             <div class="name">{{ sub.name }}</div>
           </li>
@@ -37,7 +37,7 @@ export default {
     const categoryTree = ref([])
     const currentId = ref("")
     const getData = () => {
-      api.shop.category.tree({ merchantId: 1 }).then((res) => {
+      api.store.category.tree({ merchantId: 1 }).then((res) => {
         categoryTree.value = res.filter((a) => a.children && a.children.length)
         currentId.value = res[0].id
       })

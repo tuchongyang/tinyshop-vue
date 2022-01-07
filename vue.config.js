@@ -4,8 +4,8 @@ module.exports = {
     loaderOptions: {
       sass: {
         prependData: `
-        @import '@/assets/css/variable.scss';
-        @import '@/assets/css/mixins.scss';
+          @import '@/assets/css/variable.scss';
+          @import '@/assets/css/mixins.scss';
         `,
       },
     },
@@ -13,14 +13,12 @@ module.exports = {
   devServer: {
     proxy: {
       public: {
-        target: "http://tinyshop.tucy.top",
-        // target: "http://localhost:7001",
+        target: process.env.VUE_APP_BASE_URL,
         ws: true,
         changeOrigin: true,
       },
       api: {
-        target: "http://tinyshop.tucy.top",
-        // target: "http://localhost:7001",
+        target: process.env.VUE_APP_BASE_URL,
         ws: true,
         changeOrigin: true,
       },

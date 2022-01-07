@@ -56,7 +56,7 @@ export default defineComponent({
     const getData = () => {
       const id = route.query.id
       loading.value = true
-      api.shop.good
+      api.store.good
         .detail(id)
         .then((res) => {
           good.value = res

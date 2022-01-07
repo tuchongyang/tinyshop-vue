@@ -26,7 +26,6 @@ const footMenuEffect = () => {
       iconPath: require("@/assets/images/tab-2.png"),
       selectIconPath: require("@/assets/images/tab-2-cur.png"),
     },
-    // {name: '星球',path:'/star',iconPath: require('@/assets/images/tab-3.png'),selectIconPath: require('@/assets/images/tab-3-cur.png')},
     {
       name: "购物车",
       path: "/cart",
