@@ -110,7 +110,6 @@ export default {
         count: count.value,
         isCheck: true,
       }
-      console.log("eee")
       store.dispatch("cart/addCart", cart).then(() => {
         Toast.success("添加购物车成功")
         close()

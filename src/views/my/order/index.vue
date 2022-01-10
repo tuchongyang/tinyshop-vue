@@ -32,7 +32,7 @@
                 type="default"
                 size="small"
                 @click.stop="cancelOrder(item)"
-                v-if="['canceled'].indexOf(item.status) <= -1"
+                v-if="['ordered'].indexOf(item.status) > -1"
                 >取消订单</van-button
               >
               <van-button
@@ -42,6 +42,14 @@
                 @click.stop="payOrder(item)"
                 v-if="['ordered'].indexOf(item.status) > -1"
                 >立即支付</van-button
+              >
+              <van-button
+                plain
+                type="warning"
+                size="small"
+                @click.stop="reveiveOrder(item)"
+                v-if="['receiving'].indexOf(item.status) > -1"
+                >确认收货</van-button
               >
             </div>
           </div>
@@ -71,7 +79,6 @@ export default defineComponent({
     })
     const list = ref([])
     const getList = () => {
-      console.log("finished", finished)
       if (finished.value) {
         return
       }
@@ -83,7 +90,6 @@ export default defineComponent({
             list.value = []
           }
           list.value = list.value.concat(res.rows)
-          console.log(list.value.length, res.count)
           // if (list.value.length >= res.count) {
           finished.value = true
           // }
@@ -96,7 +102,8 @@ export default defineComponent({
     const onRefresh = () => {
       params.value.page = 0
       finished.value = false
-      getList()
+      list.value = []
+      // getList()
     }
     const toDetail = (id) => {
       router.push("/my/order/detail?id=" + id)
@@ -129,6 +136,24 @@ export default defineComponent({
           // on confirm
           api.member.order.pay(data.id).then(() => {
             Toast.success("支付成功")
+            refreshing.value = true
+            onRefresh()
+          })
+        })
+        .catch(() => {
+          // on cancel
+        })
+    }
+    // 确认收货
+    const reveiveOrder = (data) => {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认收货吗？",
+      })
+        .then(() => {
+          // on confirm
+          api.member.order.receive(data.id).then(() => {
+            Toast.success("操作成功")
             refreshing.value = true
             onRefresh()
           })
@@ -177,6 +202,7 @@ export default defineComponent({
       onTabChange,
       getStatus,
       payOrder,
+      reveiveOrder,
     }
   },
 })
