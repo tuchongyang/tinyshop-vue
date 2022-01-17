@@ -1,12 +1,12 @@
 <template>
   <div class="my-container">
     <div class="user-head" @click="toUser" v-if="!user.id">
-      <div class="avatar"><img src="../../assets/images/default-user.png" /></div>
+      <div class="avatar"><img :src="defaultAvatar" /></div>
       <div class="uname">登录/注册</div>
     </div>
     <div class="user-head" @click="toUser" v-else>
       <div class="avatar">
-        <img :src="(user.avatar && user.avatar.url) || '../../assets/images/default-user.png'" />
+        <img :src="(user.avatar && user.avatar.url) || defaultAvatar" />
       </div>
       <div class="uname">{{ user.name }}</div>
     </div>
@@ -29,6 +29,7 @@
 import { defineComponent, ref, computed } from "vue"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import defaultAvatar from "@/assets/images/default-user.png"
 export default defineComponent({
   setup() {
     const store = useStore()
@@ -60,6 +61,7 @@ export default defineComponent({
       user,
       toUser,
       toPath,
+      defaultAvatar,
     }
   },
 })

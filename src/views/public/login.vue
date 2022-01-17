@@ -20,9 +20,9 @@
           <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff"></use>
         </g>
       </svg>
-      <div class="btn-back"><van-icon name="arrow-left" /></div>
+      <div class="btn-back" @click="toback"><van-icon name="arrow-left" /></div>
     </div>
-    <div class="wrapper">
+    <div class="wrapper" v-if="state == 'login'">
       <div class="title">登 录</div>
       <div class="form">
         <div class="row">
@@ -37,6 +37,36 @@
         </div>
         <div class="row">
           <div class="btn btn-login" @click="submit">登 录</div>
+          <div class="tip-regist" @click="state = 'regist'">还没有账号，立即注册</div>
+        </div>
+      </div>
+    </div>
+    <div class="wrapper" v-if="state == 'regist'">
+      <div class="title">注 册</div>
+      <div class="form">
+        <div class="row">
+          <van-icon class="icon" name="user-o" />
+          <input class="text" v-model="formRegist.username" placeholder="请输入用户名" />
+          <div class="line"></div>
+        </div>
+        <div class="row">
+          <van-icon class="icon" name="user-o" />
+          <input class="text" v-model="formRegist.name" placeholder="请输入昵称" />
+          <div class="line"></div>
+        </div>
+        <div class="row">
+          <van-icon class="icon" name="envelop-o" />
+          <input class="text" v-model="formRegist.email" placeholder="请输入邮箱" />
+          <div class="line"></div>
+        </div>
+        <div class="row">
+          <van-icon class="icon" name="bag-o" />
+          <input class="text" v-model="formRegist.password" type="password" placeholder="请输入密码" />
+          <div class="line"></div>
+        </div>
+        <div class="row">
+          <div class="btn btn-login" @click="submitRegist">注 册</div>
+          <div class="tip-regist" @click="state = 'login'">已有账号，直接登录</div>
         </div>
       </div>
     </div>
@@ -44,38 +74,20 @@
 </template>
 <script>
 import { ref } from "vue"
-import { Toast } from "vant"
-import { useStore } from "vuex"
-import { useRouter } from "vue-router"
+import { useLoginHook, useRegistHook } from "./useLoginHook"
 export default {
   setup() {
-    const store = useStore()
-    const router = useRouter()
-    const form = ref({
-      name: "",
-      password: "",
-    })
-    const submit = () => {
-      if (!form.value.name) {
-        return Toast("请输入用户名")
-      }
-      if (!form.value.password) {
-        return Toast("请输入密码")
-      }
-      Toast.loading({
-        message: "登录中...",
-        forbidClick: true,
-      })
-      store.dispatch("user/login", { name: form.value.name, password: form.value.password }).then(() => {
-        store.dispatch("user/getUserInfo", form.value).then(() => {
-          Toast.success("登录成功")
-          router.back()
-        })
-      })
-    }
+    const state = ref("login")
+    const { form, submit, toback } = useLoginHook()
+    const { form: formRegist, submit: submitRegist } = useRegistHook(state)
+
     return {
+      state,
       form,
+      toback,
       submit,
+      formRegist,
+      submitRegist,
     }
   },
 }
@@ -171,6 +183,10 @@ export default {
         &:active {
           opacity: 0.9;
         }
+      }
+      .tip-regist {
+        text-align: right;
+        padding-top: 15px;
       }
     }
   }
